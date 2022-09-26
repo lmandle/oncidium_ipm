@@ -141,7 +141,7 @@ p.vec[4,6,2,]<- rep(sdlg.std.r,nyears) #mean seedling S
 p.vec
 
 
-## The IPM FUNCTIONS: s(x), g(y,x), f(y,x), p(y,x), K(y,x)####### 
+## The IPM FUNCTIONS: s(x), g(y,x), f(y,x), p(y,x), K(y,x)#######
 ####ADULTS
 ####A.SURVIVAL function s(x)
 
@@ -161,9 +161,9 @@ points(sx(seq(log(0.01),log(10), length.out=50),p.vec,2,2)~(seq(log(0.01),log(10
 points(sx(seq(log(0.01),log(10), length.out=50),p.vec,2,3)~(seq(log(0.01),log(10),length.out=50)), type="l",col="blue",lty=3)
 
 
-### B. GROWTH function g(y,x) 
+### B. GROWTH function g(y,x)
 gyx<-function(y, x, pvec, host_species, year) {
-  mux<-pvec[2,1,host_species,year] + pvec[2,2,host_species,year]*x 
+  mux<-pvec[2,1,host_species,year] + pvec[2,2,host_species,year]*x
   sigmax2<-pvec[2,3,host_species,year]
   sigmax<-sqrt(sigmax2)
   g<-dnorm(y, mux, sigmax)
@@ -172,7 +172,7 @@ gyx<-function(y, x, pvec, host_species, year) {
 
 ##Check function with graph
 gx<-function(x, pvec, host_species, year) {
-  mux<-pvec[2,1,host_species,year] + pvec[2,2,host_species,year]*x 
+  mux<-pvec[2,1,host_species,year] + pvec[2,2,host_species,year]*x
   return(mux)
 }
 
@@ -189,9 +189,9 @@ legend(0.3, 4.3, c("Year1", "Year2", "Year3"), bg="white", bty="n", lwd=c(3,3,3)
 
 
 ####C.The SURVIVAL-GROWTH function P(y, x)
-pyx<-function(y,x, pvec, host_species, year) { 
+pyx<-function(y,x, pvec, host_species, year) {
   p<-sx(x, pvec,host_species,year)*gyx(y, x, pvec,host_species, year)
-  return(p) 
+  return(p)
 }
 
 
@@ -202,7 +202,7 @@ fyx<-function(y, x, pvec,host_species,year) {
   no.cap<-exp(pvec[4,1,host_species,year] + pvec[4,2,host_species,year]*x); ##log(mu)=a+bx
   no.sdls.cap<-pvec[4,4,host_species,year]
   scd<-dnorm(y, pvec[4,5,host_species,year], pvec[4,6,host_species,year])
-  f<-p.cap*no.cap*no.sdls.cap*scd    
+  f<-p.cap*no.cap*no.sdls.cap*scd
   return(f)
 }
 
@@ -214,7 +214,7 @@ fx<-function(x, pvec,host_species,year) {
   no.cap<-exp(pvec[4,1,host_species,year] + pvec[4,2,host_species,year]*x); ##log(mu)=a+bx
   f<-p.cap*no.cap
   return(f)
-}  
+}
 
 
 plot(fx(seq(log(0.7),log(10),length.out=50),p.vec,1,1)~(seq(log(0.7),log(10),length.out=50)), type="l",col="black",lty=1,lwd=2,xlab="Size parea at (log)", ylab="No.fruits produced")
@@ -233,7 +233,7 @@ fx<-function(x, pvec,host_species,year) {
   p.cap<-ifelse(x<log(1.44),0,(exp(xbeta)/(1+exp(xbeta))))
   no.cap<-exp(pvec[4,1,host_species,year] + pvec[4,2,host_species,year]*x); ##log(mu)=a+bx
   no.sdls.cap<-pvec[4,4,host_species,year]
-  f<-p.cap*no.cap*no.sdls.cap   
+  f<-p.cap*no.cap*no.sdls.cap
   return(f)
 }
 
@@ -257,19 +257,19 @@ points(fyx(seq(-2,2,length.out=50),seq(2.5,3.5,length.out=50),p.vec,2,3)~(seq(-2
 ## The (master) KERNEL: K(y,x)= p(y,x) + f(y,x) + c(y,x)
 Kyx<-function(y, x, pvec, host_species,year) {
   k<-pyx(y, x, pvec,host_species,year)+fyx(y, x, pvec, host_species,year)
-  return(k) 
+  return(k)
 }
 
 
 bigmat<-function(bigM, pvec, host_species, year){
-  ## Set matrix size and convergence tolerance 
+  ## Set matrix size and convergence tolerance
   min.sz<-1*min((range(log(onc$initial.parea),na.rm=T)))#check to remove outlier #0.9
   max.sz<-1*max((range(log(onc$initial.parea),na.rm=T)))#check to remove outlier #1.1
-  
-  # Compute meshpoints iteration matrix KD 
-  h=(max.sz-min.sz)/(bigM+1); 
-  y=(seq(min.sz,max.sz,length=bigM)+seq(min.sz+h,max.sz+h,length=bigM))/2;  
-  
+
+  # Compute meshpoints iteration matrix KD
+  h=(max.sz-min.sz)/(bigM+1);
+  y=(seq(min.sz,max.sz,length=bigM)+seq(min.sz+h,max.sz+h,length=bigM))/2;
+
   ## Apply Kyx funct for y and y, pvec (=p.vec), species (choose!!)
   K=outer(y,y,Kyx, pvec, host_species, year);
   KD=h*K;
@@ -281,7 +281,7 @@ bigmat<-function(bigM, pvec, host_species, year){
 
 ##Loop to extract lambda values
 lam<-matrix(0,nhost_species,nyears)
-A<-array(0, c(800, 800, nhost_species,nyears)) 
+A<-array(0, c(800, 800, nhost_species,nyears))
 
 for(i in 1:nhost_species){
   for(j in 1:nyears){
@@ -294,7 +294,7 @@ for(i in 1:nhost_species){
 
 #Extract lambda values
 lam[1,1]#mart year 1 0.84
-lam[1,2]#mart, year2 0.83 
+lam[1,2]#mart, year2 0.83
 lam[1,3]#mart, year3 0.88
 
 lam[2,1]#rug yr1 0.82
@@ -309,10 +309,10 @@ lam[2,3]#rug yr3 1.01
 
 n.boot=100 #Kuss used 5000
 nhost_species<-2
-nyears<-2
+nyears<-3 #updated to 3 years
   lambda.boot=array(NA,c(nhost_species,nyears,n.boot))
   for(b.samp in 1:n.boot){
-  
+
     #Adult survival
   sample.boot=c(sample(1:nrow(oncs),replace=T)) #generate bootstrapped sample
   oncs.boot<-data.frame( survival=oncs$survival[sample.boot],#create bootstrapped dataset
@@ -321,11 +321,11 @@ nyears<-2
                            host_species=oncs$host_species[sample.boot],
                            host_number=oncs$host_number[sample.boot],
                            id=oncs$id[sample.boot])
-  
+
   surv10.boot<-update(surv10, data=oncs.boot) #refit model
   s1.boot<-fixef(surv10.boot)
-  
-  
+
+
   #Adult growth
   sample.boot=c(sample(1:nrow(oncf),replace=T)) #generate bootstrapped sample
   oncf.boot<-data.frame(final.parea=oncf$final.parea[sample.boot],#create bootstrapped dataset
@@ -336,9 +336,9 @@ nyears<-2
                         id=oncf$id[sample.boot])
   grow.boot<-update(grow, data=oncf.boot) #refit model
   g1.boot.boot<-fixef(grow.boot)
-  g.sig2.boot<-summary(grow.boot)$sigma^2 
-  
-  
+  g.sig2.boot<-summary(grow.boot)$sigma^2
+
+
   #Fecundity
   sample.boot=c(sample(1:nrow(oncsr),replace=T))
   oncsr.boot<-data.frame(reproduce=oncsr$reproduce[sample.boot], #create bootstrapped dataset
@@ -346,83 +346,82 @@ nyears<-2
                         host_species=oncsr$host_species[sample.boot],
                         host_number=oncsr$host_number[sample.boot],
                         id=oncsr$id[sample.boot])
-  
+
   rep3.boot<-glmmTMB(reproduce~log(initial.parea)+host_species, data=oncsr.boot) #remove individual-level random effect
-  r1.boot.boot<-coef(rep3.boot)
-  
+  r1.boot.boot<-fixef(rep3.boot) #changed from coef to fixef to extract parameters
+
   #Capsules produced
-  
+
   sample.boot=c(sample(1:nrow(oncsc),replace=T))
   oncsr.boot<-data.frame(capsules=oncsc$capsules[sample.boot], #create bootstrapped dataset
                          initial.parea=oncsc$initial.parea[sample.boot])
-                         
+
   cap11b.boot<-update(cap11b, data=oncsr.boot) #refit model
   c1.boot<-fixef(cap11b.boot)
-  
-  
+
+
   oncsc<-subset(oncs, capsules>0)
-  
+
   cap11b<-glmmTMB(capsules~log(initial.parea), family="nbinom1", data=oncsc)
   summary(cap11b)
-  
+
   c1<-fixef(cap11b)
-  
-  
+
+
   #rebuild p.vec from bootstrapped params
   p.vec.boot<-array(0,c(4,ncoef,nhost_species,nyears))
-  
+
     #params constant across scenarios
-  p.vec.boot.[1,1,1,1]<- s1.boot$cond[1] #intercept for survival mart yr1.boot
-  p.vec.boot.boot[1,1,1,2]<- s1.boot$cond[1]+s1.boot$cond[3] #mart yr2
+  p.vec.boot[1,1,1,1]<- s1.boot$cond[1] #intercept for survival mart yr1.boot
+  p.vec.boot[1,1,1,2]<- s1.boot$cond[1]+s1.boot$cond[3] #mart yr2
   p.vec.boot[1,1,1,3]<- s1.boot$cond[1]+s1.boot$cond[4] #mar yr3
   p.vec.boot[1,1,2,1]<- s1.boot$cond[1]+s1.boot$cond[5] #rug yr1.boot
   p.vec.boot[1,1,2,2]<- s1.boot$cond[1]+s1.boot$cond[3] +s1.boot$cond[5]+s1.boot$cond[6]#rugyr2
   p.vec.boot[1,1,2,3]<- s1.boot$cond[1]+s1.boot$cond[4] +s1.boot$cond[5]+s1.boot$cond[7]#rugyr3
-  
-  
+
+
   p.vec.boot[1,2,,]<- rep(s1.boot$cond[2],nyears*nhost_species) #slope for survival all years
-  
+
   p.vec.boot[2,1,1,1]<- g1.boot.boot$cond[1]#intercept for growth mart yr1.boot
-  p.vec.boot[2,1,1,2]<- g1.boot.boot$cond[1]+g1.boot$cond[4]#intercept for growth mart yr2
-  p.vec.boot[2,1,1,3]<- g1.boot$cond[1]+g1.boot$cond[5]#intercept for growth mart yr3
-  p.vec.boot[2,1,2,1]<- g1.boot$cond[1]+g1.boot$cond[3]#intercept for growth rug yr1.boot
-  p.vec.boot[2,1,2,2]<- g1.boot$cond[1]+g1.boot$cond[3]+g1.boot$cond[4]+g1.boot$cond[6]#intercept for growth rug yr2
-  p.vec.boot[2,1,2,3]<- g1.boot$cond[1]+g1.boot$cond[3]+g1.boot$cond[5]+g1.boot$cond[7]#intercept for growth rug yr3
-  
-  p.vec.boot[2,2,,]<- rep(g1.boot$cond[2],nyears*nhost_species)#slope for growth
+  p.vec.boot[2,1,1,2]<- g1.boot.boot$cond[1]+g1.boot.boot$cond[4]#intercept for growth mart yr2
+  p.vec.boot[2,1,1,3]<- g1.boot.boot$cond[1]+g1.boot.boot$cond[5]#intercept for growth mart yr3
+  p.vec.boot[2,1,2,1]<- g1.boot.boot$cond[1]+g1.boot.boot$cond[3]#intercept for growth rug yr1.boot
+  p.vec.boot[2,1,2,2]<- g1.boot.boot$cond[1]+g1.boot.boot$cond[3]+g1.boot.boot$cond[4]+g1.boot.boot$cond[6]#intercept for growth rug yr2
+  p.vec.boot[2,1,2,3]<- g1.boot.boot$cond[1]+g1.boot.boot$cond[3]+g1.boot.boot$cond[5]+g1.boot.boot$cond[7]#intercept for growth rug yr3
+
+  p.vec.boot[2,2,,]<- rep(g1.boot.boot$cond[2],nyears*nhost_species)#slope for growth
   p.vec.boot[2,3,,]<-rep(g.sig2.boot,nyears*nhost_species)#g.sigma2 overall variation
-  
-  p.vec.boot[3,1,1,1]<- r1.boot$cond[1] #intercept for prob fruiting mart yr1.boot
-  p.vec.boot[3,1,1,2]<- r1.boot$cond[1] # mart yr2
-  p.vec.boot[3,1,1,3]<- r1.boot$cond[1] # mart yr3
-  p.vec.boot[3,1,2,1]<- r1.boot$cond[1]+r1.boot$cond[3] #  rug yr1.boot
-  p.vec.boot[3,1,2,2]<- r1.boot$cond[1]+r1.boot$cond[3] #  rug yr2
-  p.vec.boot[3,1,2,3]<- r1.boot$cond[1]+r1.boot$cond[3] #  rug yr3
-  
-  p.vec.boot[3,2,,]<- rep(r1.boot$cond[2],nyears*nhost_species)# slope for prob fruiting
-  
-  
+
+  p.vec.boot[3,1,1,1]<- r1.boot.boot$cond[1] #intercept for prob fruiting mart yr1.boot
+  p.vec.boot[3,1,1,2]<- r1.boot.boot$cond[1] # mart yr2
+  p.vec.boot[3,1,1,3]<- r1.boot.boot$cond[1] # mart yr3
+  p.vec.boot[3,1,2,1]<- r1.boot.boot$cond[1]+r1.boot.boot$cond[3] #  rug yr1.boot
+  p.vec.boot[3,1,2,2]<- r1.boot.boot$cond[1]+r1.boot.boot$cond[3] #  rug yr2
+  p.vec.boot[3,1,2,3]<- r1.boot.boot$cond[1]+r1.boot.boot$cond[3] #  rug yr3
+
+  p.vec.boot[3,2,,]<- rep(r1.boot.boot$cond[2],nyears*nhost_species)# slope for prob fruiting
+
+
   p.vec.boot[4,1,,]<- rep(c1.boot$cond[1],nyears)#intercept for #caps/fruiting indiv, mart and rug allyrs
   p.vec.boot[4,2,,]<- rep(c1.boot$cond[2],nyears*nhost_species)#slope for no.caps/fruit individuals
-  
+
   p.vec.boot[4,4,1,]<- rep(sd.cap.m,nyears)#mean.sdlgs/capsule, mart years
   p.vec.boot[4,4,2,]<- rep(sd.cap.r,nyears)#mean.sdlgs/capsule, rug years
-  
-  
+
+
   p.vec.boot[4,5,1,]<- rep(sdlg.mean.m,nyears) #mean seedling size
   p.vec.boot[4,5,2,]<- rep(sdlg.mean.r,nyears) #mean seedling size
-  
+
   p.vec.boot[4,6,1,]<- rep(sdlg.std.m,nyears) #mean seedling SD
   p.vec.boot[4,6,2,]<- rep(sdlg.std.r,nyears) #mean seedling S
-  
- 
+
+
   #calculate bootstrapped lambda across all scenarios
   ##LISA NEXT 2 PARTS IS WHERE I NEED HELP W THE CODE! :)
-  
   for(i in 1:nhost_species){
     for(j in 1:nyears){
       lambda.boot[i,j,b.samp]<-tryCatch(
-      expr<-eigen.analysis(bigmat(400, pvec=p.vec.boot[host_species=i,year=j]))$lambda1,
+      expr<-eigen.analysis(bigmat(800, pvec=p.vec.boot[,,,],host_species=i,year=j))$lambda1, #bigmat function selected species and year, so take the full p.vec.boot; changed meshpoints to 800 to match above
       error=function(cond){
         message(cond)
         return(NA)},
@@ -432,25 +431,26 @@ nyears<-2
     }
   }
   }
- 
-  #convert lambda.boot array to dataframe
-lambda.boot.df<-data.frame(scenario=rep(c(1:n_host*nyears), each=n.boot),
-                           rep=rep(c(1:n.boot), teams=nhost_species*nyears),
-                           lambda=as.vector(t(lambda.boot))) #turns lambda.boot lambda values into a vector, ordered by scenario
 
-date = gsub(":","-",Sys.time()) #get date and time to append to filename  
+  #convert lambda.boot array to dataframe
+lambda.boot.df<-data.frame(host_species=rep(c(1:nhost_species), nyears*n.boot), #set up dataframe to match ordering of lambdas in flattened matrix
+                           year=rep(rep(c(1:nyears), each=nhost_species), n.boot),
+                           rep=rep(c(1:n.boot), each=nhost_species*nyears),
+                           lambda=as.vector(t(as.matrix(lambda.boot)))) #turns lambda.boot lambda values into a vector, ordered by scenario
+
+date = gsub(":","-",Sys.time()) #get date and time to append to filename
 date = gsub(" ","_",date)
-write.csv(lambda.boot.df, file=paste0("lama.lambda.boot", "_", date, ".csv"))
+write.csv(oncidium.boot.df, file=paste0("oncidium.lambda.boot", "_", date, ".csv"))
 
 lambda.summary <- lambda.boot.df %>%
   group_by(host_species,year) %>%
   summarize(mean_l = mean(lambda, na.rm=T), median_l=median(lambda,na.rm=T),
-            lower_95ci=quantile(lambda, p=0.025, na.rm=T), 
+            lower_95ci=quantile(lambda, p=0.025, na.rm=T),
             upper_95ci=quantile(lambda, p=0.975, na.rm=T))
 
-ggplot(data=lambda.boot.df, aes(lambda))+  
+ggplot(data=lambda.boot.df, aes(lambda))+
   geom_histogram(bins=50)+
-  facet_grid(cols=vars(scenario))+
+  facet_grid(cols=vars(year), rows=vars(host_species))+
   geom_vline(data  = lambda.summary, aes(xintercept = mean_l), color = "green")+
   geom_vline(data  = lambda.summary, aes(xintercept = median_l), color = "blue")+
   geom_vline(data  = lambda.summary, aes(xintercept = lower_95ci), color = "red")+
